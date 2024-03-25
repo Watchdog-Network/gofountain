@@ -2,8 +2,6 @@ package gofountain
 
 import (
 	"encoding/json"
-	"os"
-	"strconv"
 )
 
 // A HLFEncodedBlock represents Hyperledger fabric block that store transaction
@@ -37,18 +35,8 @@ type BlockMetadata struct {
 }
 
 // EqualizeParsedBlockLentghs adds padding to parsed blocks to make them devided by number of source symbols.
-// Returns a slice of serialized parsedblock with padding, numSourceSymbols, symbolAlignmentSize, numEncodedSourceSymbols.
-func EqualizeParsedBlockLengths(parsedBlock HLFEncodedBlock) ([]byte, int, int, int) {
-	// numSourceSymbols means how many source symbols the input message will be divided into
-	// and the minimum number of source symbols required for decoding.
-	numSourceSymbols, _ := strconv.Atoi(os.Getenv("NUM_SOURCE_SYMBOLS"))
-
-	// symbolAlignmentSize, the size of ach symbol in the source message in bytes.
-	symbolAlignmentSize, _ := strconv.Atoi(os.Getenv("SYMBOL_ALIGNMENT_SIZE"))
-
-	// numEncodedSourceSymbols means how many encoded source symbols will be created using source symbols
-	// and the maximum number of source symbols required for decoding.
-	numEncodedSourceSymbols, _ := strconv.Atoi(os.Getenv("NUM_ENCODED_SOURCE_SYMBOLS"))
+// Returns a slice of serialized parsedblock with padding.
+func EqualizeParsedBlockLengths(numSourceSymbols int, symbolAlignmentSize int, numEncodedSourceSymbols int, parsedBlock HLFEncodedBlock) []byte {
 
 	marshalledBlock, _ := json.Marshal(parsedBlock)
 
@@ -64,5 +52,5 @@ func EqualizeParsedBlockLengths(parsedBlock HLFEncodedBlock) ([]byte, int, int, 
 	parsedBlock.Padding = padding
 	marshalledBlock, _ = json.Marshal(parsedBlock)
 
-	return marshalledBlock, numSourceSymbols, symbolAlignmentSize, numEncodedSourceSymbols
+	return marshalledBlock
 }
